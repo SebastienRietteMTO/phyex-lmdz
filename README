@@ -1,0 +1,5 @@
+PHYEX-LMDZ
+==========
+
+This repository contains the LMDZ routines necessary to call
+the PHYEX parameterizations.
