@@ -336,6 +336,7 @@ MODULE physiqex_mod
       REAL, DIMENSION(klon,klev+2) ::  PEMF      ! updraft mass flux
       REAL, DIMENSION(klon,klev+2) ::  PDETR     ! updraft detrainment
       REAL, DIMENSION(klon,klev+2) ::  PENTR     ! updraft entrainment
+      REAL, DIMENSION(klon,klev+2) ::  ZTAUFUNC
       INTEGER,DIMENSION(klon) ::IKLCL,IKETL,IKCTL ! level of LCL,ETL and CTL
       ! Values after saturation adjustement
       REAL, DIMENSION(klon,klev) :: t_adj ! Adjusted temperature
@@ -1028,7 +1029,7 @@ MODULE physiqex_mod
                 &PTHL_UP=PTHL_UP(:,:),PRT_UP=PRT_UP(:,:),PRV_UP=PRV_UP(:,:),                                    &
                 &PRC_UP=PRC_UP(:,:),PRI_UP=PRI_UP(:,:),                                                         &
                 &PU_UP=PU_UP(:,:), PV_UP=PV_UP(:,:), PTKE_UP=PTKE_UP(:,:), PTHV_UP=PTHV_UP(:,:), PW_UP=PW_UP(:,:),                    &
-                &PFRAC_UP=PFRAC_UP(:,:),PEMF=PEMF(:,:),PDETR=PDETR(:,:),PENTR=PENTR(:,:),                       &
+                &PFRAC_UP=PFRAC_UP(:,:),PEMF=PEMF(:,:),PDETR=PDETR(:,:),PENTR=PENTR(:,:),PTAUFUNC=ZTAUFUNC,     &
                 &KKLCL=IKLCL(:),KKETL=IKETL(:),KKCTL=IKCTL(:),PDX=1000.0,PDY=1000.0,KBUDGETS=MISC_LMDZ%NBUDGET )
 
    ! Add tendencies of shallow to total physics tendency
