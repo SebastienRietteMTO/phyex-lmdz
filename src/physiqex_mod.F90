@@ -1100,9 +1100,10 @@ MODULE physiqex_mod
    ZTOWN=0.
    ZCIT=0.
    ZTHVREFZIKB=0
-   CALL RAIN_ICE (D, PHYEX%CST, PHYEX%PARAM_ICEN, PHYEX%RAIN_ICE_PARAMN, PHYEX%RAIN_ICE_DESCRN,                      &
-               PHYEX%ELEC_PARAM, PHYEX%ELEC_DESCR, MISC_LMDZ%TBUCONF,                                            &
-               MISC_LMDZ%OELEC, MISC_LMDZ%OSEDIM_BEARD,                                                         &
+   CALL RAIN_ICE (D, PHYEX%CST, PHYEX%PARAM_ICEN, PHYEX%RAIN_ICE_PARAMN, PHYEX%RAIN_ICE_DESCRN,                   &
+               PHYEX%ELEC_PARAM, PHYEX%ELEC_DESCR, MISC_LMDZ%TBUCONF,                                             &
+               PHYEX%PARAM_LIMA, PHYEX%PARAM_LIMA_COLD, PHYEX%PARAM_LIMA_MIXED,                                   &
+               MISC_LMDZ%OELEC, MISC_LMDZ%OSEDIM_BEARD,                                                           &
                ZTHVREFZIKB,                                                                                       &
                pdtphys, KRR, ZEXN,                                                                                &
                zdzf, PRHODJ, ZRHOD, ZEXN, ZPABST, ZCIT, ZCLDFR,                                                   &
