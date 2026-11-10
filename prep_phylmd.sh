@@ -3,6 +3,7 @@
 # Prepares the LMDZ physics directory (<DIR>/modipsl/modeles/LMDZ/libf/phylmd),
 # once the PHYEX and phyex-lmdz source files are put in it, for the compilation:
 #  - INCLUDE "shugrad.h" lines are replaced by the content of shugrad.h
+#  - the interface modules (MODI_*) are generated with gen_modi.py
 #  - with the make build system: files are renamed so that the file names
 #    match the module names
 #  - without ecrad: some files of the ecrad directory (yom*, abor1, parkind1)
@@ -43,6 +44,13 @@ while [ $# -gt 0 ]; do
 done
 if [ -z "$dir" ]; then
   echo "The LMDZ directory is missing" >&2; usage >&2; exit 1
+fi
+
+# Interface generator, next to this script
+gen_modi="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/gen_modi.py"
+if [ ! -f "$gen_modi" ]; then
+  echo "$gen_modi not found" >&2
+  exit 4
 fi
 
 target="$dir/modipsl/modeles/LMDZ/libf/phylmd"
@@ -87,6 +95,25 @@ if [ -n "$files" ]; then
     mv "$file.shugrad_tmp" "$file"
   done <<< "$files"
 fi
+
+#-----------------------------------------------------------------------
+# Interface modules (MODI_*) generated from the source files (xxx.F90 ->
+# modi_xxx.F90), for the listed source files present in the directory (an
+# unchanged file is not rewritten).
+# Same list as in src/phyex/cmake/modi_sources.txt of PHYEX
+#-----------------------------------------------------------------------
+
+modi_sources="gamma_inc.F90 general_gamma.F90 ini_phyex.F90 second_mnh.F90
+              condensation.F90 ice4_pack.F90 ice4_stepping.F90 ice_adjust.F90
+              lima.F90 lima_adjust_split.F90 lima_precip_scavenging.F90
+              rain_ice.F90 rain_ice_old.F90 rain_ice_part1.F90 rain_ice_part3.F90
+              shallow_mf.F90 turb.F90"
+tmpdir=$(mktemp -d)
+trap 'rm -rf "$tmpdir"' EXIT
+for file in $modi_sources; do
+  python3 -I "$gen_modi" -o "$tmpdir" "$file"
+  mvdiff "$tmpdir/modi_$file" "modi_$file"
+done
 
 #-----------------------------------------------------------------------
 # make: file names must match module names
