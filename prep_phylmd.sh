@@ -2,8 +2,8 @@
 
 # Prepares the LMDZ physics directory (<DIR>/modipsl/modeles/LMDZ/libf/phylmd),
 # once the PHYEX and phyex-lmdz source files are put in it, for the compilation:
-#  - INCLUDE "shugrad.h", INCLUDE "gamma.h" and INCLUDE "momg.h" lines are
-#    replaced by the content of the included file
+#  - INCLUDE "shugrad.h", INCLUDE "gamma.h", INCLUDE "momg.h" and
+#    INCLUDE "tiwmx.func.h" lines are replaced by the content of the included file
 #  - the interface modules (MODI_*) are generated with gen_modi.py
 #  - with the make build system: files are renamed so that the file names
 #    match the module names
@@ -71,11 +71,12 @@ mvdiff() {
 }
 
 #-----------------------------------------------------------------------
-# INCLUDE "shugrad.h", INCLUDE "gamma.h" and INCLUDE "momg.h" replaced by the
-# content of the included file
+# INCLUDE "shugrad.h", INCLUDE "gamma.h", INCLUDE "momg.h" and INCLUDE "tiwmx.func.h"
+# replaced by the content of the included file (these files contain USE statements
+# which would not be seen by the dependency analysis otherwise)
 #-----------------------------------------------------------------------
 
-for inc in shugrad.h gamma.h momg.h; do
+for inc in shugrad.h gamma.h momg.h tiwmx.func.h; do
   # Matches an INCLUDE "$inc" line (case insensitive, simple or double quotes)
   inc_re='^[[:space:]]*[Ii][Nn][Cc][Ll][Uu][Dd][Ee][[:space:]]*["'"'"']'"${inc//./\\.}"'["'"'"'][[:space:]]*$'
   files=$(find . \( -type f -o -type l \) \
