@@ -2,8 +2,8 @@
 
 # Prepares the LMDZ physics directory (<DIR>/modipsl/modeles/LMDZ/libf/phylmd),
 # once the PHYEX and phyex-lmdz source files are put in it, for the compilation:
-#  - INCLUDE "shugrad.h" and INCLUDE "gamma.h" lines are replaced by the
-#    content of the included file
+#  - INCLUDE "shugrad.h", INCLUDE "gamma.h" and INCLUDE "momg.h" lines are
+#    replaced by the content of the included file
 #  - the interface modules (MODI_*) are generated with gen_modi.py
 #  - with the make build system: files are renamed so that the file names
 #    match the module names
@@ -71,11 +71,11 @@ mvdiff() {
 }
 
 #-----------------------------------------------------------------------
-# INCLUDE "shugrad.h" and INCLUDE "gamma.h" replaced by the content of the
-# included file
+# INCLUDE "shugrad.h", INCLUDE "gamma.h" and INCLUDE "momg.h" replaced by the
+# content of the included file
 #-----------------------------------------------------------------------
 
-for inc in shugrad.h gamma.h; do
+for inc in shugrad.h gamma.h momg.h; do
   # Matches an INCLUDE "$inc" line (case insensitive, simple or double quotes)
   inc_re='^[[:space:]]*[Ii][Nn][Cc][Ll][Uu][Dd][Ee][[:space:]]*["'"'"']'"${inc//./\\.}"'["'"'"'][[:space:]]*$'
   files=$(find . \( -type f -o -type l \) \
@@ -137,7 +137,6 @@ if [ $make -eq 1 ]; then
   done
   for pair in hypgeo.F90:modi_hypgeo.F90 \
               hypser.F90:modi_hypser.F90 \
-              momg.F90:modi_momg.F90 \
               tools.F90:mode_tools.F90 \
               shuman_mf.F90:modi_shuman_mf.F90 \
               shuman_phy.F90:mode_shuman_phy.F90; do
