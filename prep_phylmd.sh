@@ -2,7 +2,8 @@
 
 # Prepares the LMDZ physics directory (<DIR>/modipsl/modeles/LMDZ/libf/phylmd),
 # once the PHYEX and phyex-lmdz source files are put in it, for the compilation:
-#  - INCLUDE "shugrad.h" lines are replaced by the content of shugrad.h
+#  - INCLUDE "shugrad.h" and INCLUDE "gamma.h" lines are replaced by the
+#    content of the included file
 #  - the interface modules (MODI_*) are generated with gen_modi.py
 #  - with the make build system: files are renamed so that the file names
 #    match the module names
@@ -70,31 +71,34 @@ mvdiff() {
 }
 
 #-----------------------------------------------------------------------
-# INCLUDE "shugrad.h" replaced by the content of shugrad.h
+# INCLUDE "shugrad.h" and INCLUDE "gamma.h" replaced by the content of the
+# included file
 #-----------------------------------------------------------------------
 
-# Matches an INCLUDE "shugrad.h" line (case insensitive, simple or double quotes)
-shugrad_re='^[[:space:]]*[Ii][Nn][Cc][Ll][Uu][Dd][Ee][[:space:]]*["'"'"']shugrad\.h["'"'"'][[:space:]]*$'
-files=$(find . \( -type f -o -type l \) \
-             \( -name '*.F90' -o -name '*.f90' -o -name '*.F' -o -name '*.f' -o -name '*.h' \) \
-             ! -name shugrad.h -print0 | \
-        xargs -0 -r grep -s -l -E "$shugrad_re" || true)
-if [ -n "$files" ]; then
-  if [ ! -f shugrad.h ]; then
-    echo "shugrad.h not found in $target" >&2
-    exit 3
+for inc in shugrad.h gamma.h; do
+  # Matches an INCLUDE "$inc" line (case insensitive, simple or double quotes)
+  inc_re='^[[:space:]]*[Ii][Nn][Cc][Ll][Uu][Dd][Ee][[:space:]]*["'"'"']'"${inc//./\\.}"'["'"'"'][[:space:]]*$'
+  files=$(find . \( -type f -o -type l \) \
+               \( -name '*.F90' -o -name '*.f90' -o -name '*.F' -o -name '*.f' -o -name '*.h' \) \
+               ! -name "$inc" -print0 | \
+          xargs -0 -r grep -s -l -E "$inc_re" || true)
+  if [ -n "$files" ]; then
+    if [ ! -f "$inc" ]; then
+      echo "$inc not found in $target" >&2
+      exit 3
+    fi
+    while IFS= read -r file; do
+      # The result is written in a new regular file: when the file is a
+      # symbolic link, the original file (e.g. in a PHYEX repository) is
+      # left untouched
+      awk -v re="$inc_re" -v inc="$inc" '
+        $0 ~ re { while ((getline line < inc) > 0) print line; close(inc); next }
+        { print }' "$file" > "$file.include_tmp"
+      rm -f "$file"
+      mv "$file.include_tmp" "$file"
+    done <<< "$files"
   fi
-  while IFS= read -r file; do
-    # The result is written in a new regular file: when the file is a
-    # symbolic link, the original file (e.g. in a PHYEX repository) is
-    # left untouched
-    awk -v re="$shugrad_re" -v inc=shugrad.h '
-      $0 ~ re { while ((getline line < inc) > 0) print line; close(inc); next }
-      { print }' "$file" > "$file.shugrad_tmp"
-    rm -f "$file"
-    mv "$file.shugrad_tmp" "$file"
-  done <<< "$files"
-fi
+done
 
 #-----------------------------------------------------------------------
 # Interface modules (MODI_*) generated from the source files (xxx.F90 ->
