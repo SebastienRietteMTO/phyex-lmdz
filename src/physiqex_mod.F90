@@ -424,7 +424,7 @@ MODULE physiqex_mod
         !PRINT*,'zjulian=',zjulian
   
         ZDZMIN=MINVAL((pphi(:,2:) - pphi(:,1:klev-1))/9.81)
-        CALL INIT_PHYEX(pdtphys, ZDZMIN, PHYEX, MISC_LMDZ)
+        CALL INIT_PHYEX(pdtphys, klev+2, ZDZMIN, PHYEX, MISC_LMDZ)
         CALL FILL_DIMPHYEX(KLON, KLEV, D)
 
         ! Variables SAVEd
